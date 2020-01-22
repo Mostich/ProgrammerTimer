@@ -1,0 +1,9 @@
+D:\Кирилл\C#\Timer\Timer\bin\Release\Timer.exe.config
+D:\Кирилл\C#\Timer\Timer\bin\Release\Timer.exe
+D:\Кирилл\C#\Timer\Timer\bin\Release\Timer.pdb
+D:\Кирилл\C#\Timer\Timer\obj\Release\Timer.csprojAssemblyReference.cache
+D:\Кирилл\C#\Timer\Timer\obj\Release\Timer.Form1.resources
+D:\Кирилл\C#\Timer\Timer\obj\Release\Timer.Properties.Resources.resources
+D:\Кирилл\C#\Timer\Timer\obj\Release\Timer.csproj.GenerateResource.cache
+D:\Кирилл\C#\Timer\Timer\obj\Release\Timer.exe
+D:\Кирилл\C#\Timer\Timer\obj\Release\Timer.pdb
