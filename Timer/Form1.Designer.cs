@@ -37,8 +37,11 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.timer4 = new System.Windows.Forms.Timer(this.components);
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.Grid = new System.Windows.Forms.DataGridView();
+            this.colDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colPrim = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            ((System.ComponentModel.ISupportInitialize)(this.Grid)).BeginInit();
             this.SuspendLayout();
             // 
             // Label1
@@ -101,28 +104,50 @@
             this.timer4.Interval = 60000;
             this.timer4.Tick += new System.EventHandler(this.Timer4_Tick);
             // 
-            // listBox1
+            // Grid
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(17, 106);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(140, 186);
-            this.listBox1.TabIndex = 2;
+            this.Grid.AllowUserToAddRows = false;
+            this.Grid.AllowUserToDeleteRows = false;
+            this.Grid.AllowUserToResizeColumns = false;
+            this.Grid.AllowUserToResizeRows = false;
+            this.Grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.Grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.Grid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colDate,
+            this.colTime,
+            this.colPrim});
+            this.Grid.Location = new System.Drawing.Point(5, 82);
+            this.Grid.Name = "Grid";
+            this.Grid.RowHeadersVisible = false;
+            this.Grid.RowTemplate.Height = 24;
+            this.Grid.Size = new System.Drawing.Size(451, 215);
+            this.Grid.TabIndex = 3;
+            this.Grid.DoubleClick += new System.EventHandler(this.Grid_DoubleClick);
             // 
-            // textBox1
+            // colDate
             // 
-            this.textBox1.Location = new System.Drawing.Point(190, 106);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(217, 186);
-            this.textBox1.TabIndex = 3;
+            this.colDate.HeaderText = "Дата";
+            this.colDate.Name = "colDate";
+            this.colDate.ReadOnly = true;
+            this.colDate.Width = 57;
+            // 
+            // colTime
+            // 
+            this.colTime.HeaderText = "Время";
+            this.colTime.Name = "colTime";
+            this.colTime.ReadOnly = true;
+            this.colTime.Width = 66;
+            // 
+            // colPrim
+            // 
+            this.colPrim.HeaderText = "Примечания";
+            this.colPrim.Name = "colPrim";
+            this.colPrim.ReadOnly = true;
             // 
             // Form1
             // 
             this.ClientSize = new System.Drawing.Size(460, 309);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.listBox1);
+            this.Controls.Add(this.Grid);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label6);
@@ -131,6 +156,7 @@
             this.Name = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Resize += new System.EventHandler(this.Form1_Resize);
+            ((System.ComponentModel.ISupportInitialize)(this.Grid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -148,8 +174,10 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Timer timer4;
-        private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.DataGridView Grid;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colDate;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colTime;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colPrim;
     }
 }
 

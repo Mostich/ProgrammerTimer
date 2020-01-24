@@ -26,17 +26,19 @@ namespace Timer
         [DllImport("user32.dll")]
         public static extern UInt32 GetWindowThreadProcessId(IntPtr hwnd, ref Int32 pid);
 
-
-        public static DateTime current_date = DateTime.Now;
+        formDay frmDay = new formDay();
+        
+        public static string current_date = DateTime.Now.ToShortDateString();
         public static int day;
         public static int time_day;
-        public static string text_day;
         public static int time_all;
         public static string text;
-
-        static RegistryKey currentUserKey = Registry.CurrentUser;
-        static RegistryKey Time = currentUserKey.CreateSubKey("Time");
-        
+        public static string[] selectedDay = {""};
+        public string selected;
+        public static string[] words;
+        public static RegistryKey currentUserKey = Registry.CurrentUser;
+        public static RegistryKey Time = currentUserKey.CreateSubKey("Time");
+        public static string textbox;
         public Form1()
         {
             InitializeComponent();
@@ -46,23 +48,19 @@ namespace Timer
             else
                 time_all = Convert.ToInt32(Time.GetValue("time_all").ToString());
 
-            if (Time.GetValue(current_date.ToShortDateString()) is null)
+            if (Time.GetValue(current_date) is null)
             {
                 time_day = 0;
-                text_day = "";
             }
             else 
             {
-                Parsing_Key(Time.GetValue(current_date.ToShortDateString()).ToString());
-                
+                string[] tmp = Time.GetValue(current_date).ToString().Split(new char[] { '!' });
+                time_day = Convert.ToInt32(tmp[0]);
             }
-
-            Time.SetValue("time_all", time_all);
-            text = time_day + "!" + textBox1.Text;
-            Time.SetValue(current_date.ToShortDateString(), text);
+            
             ShowTime();
             StatDays();
-
+            
             this.ShowInTaskbar = false;
 
         }
@@ -72,23 +70,17 @@ namespace Timer
         {
             if (this.Visible)
             {
-
                 this.Hide();
-
             }
             else
             {
                 this.ShowInTaskbar = true;
                 this.Show();
-
             }
 
 
         }//-- Открыть/заркыть окно в трее
-        private void Label1_Click(object sender, EventArgs e)
-        {
-
-        }//--
+        
         private void Timer3_Tick(object sender, EventArgs e)//-- Окно в фокусе время идет
         {
             IntPtr h = GetForegroundWindow();
@@ -103,14 +95,17 @@ namespace Timer
                 time_day++;
                 ShowTime();
             }
-            
-
         }
+
+        private void Timer4_Tick(object sender, EventArgs e)//В промежуток времени сохраняем время в localstor
+        {
+            SaveDataDay(); //сохраняем в реестор
+            StatDays();
+        }
+
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)//Окно закрывается сохраняем regedit
         {
-            Time.SetValue("time_all", time_all);
-            text = time_day + "!" + textBox1.Text;
-            Time.SetValue(current_date.ToShortDateString(), text);
+            SaveDataDay(); //сохраняем в реестор
             Time.Close();
             notifyIcon2.Visible = false;
         }
@@ -118,24 +113,38 @@ namespace Timer
         {
             this.WindowState = FormWindowState.Normal;
             this.Hide();
-        }//--
+        }
         private void label3_Click(object sender, EventArgs e)
         {
 
-        }//--
+        }
         private void CheckDate()//Проверяем на новую дату
         {
-            DateTime datenow = DateTime.Now;
-            if (current_date.ToShortDateString() != datenow.ToShortDateString())
+            string datenow = DateTime.Now.ToShortDateString();
+            if (current_date != datenow)
             {
+                SaveDataDay(); //сохраняем в реестор
                 current_date = datenow;
-                text = time_day + "!" + textBox1.Text;
-                Time.SetValue(current_date.ToShortDateString(), text);
-                Time.SetValue("time_all", time_all);
                 time_day = 0;
-                text_day = "";
-                textBox1.Text = "";
             }
+        }
+
+        private void SaveDataDay() 
+        {
+            Time.SetValue("time_all", time_all);
+
+            if (Time.GetValue(current_date.ToString()) is null)
+            {
+                Time.SetValue(current_date.ToString(), time_day + "!" );
+            }
+            else 
+            {
+                // Парсим строку из реестра по текущей дате!
+                string[] temp = Time.GetValue(current_date.ToString()).ToString().Split(new char[] { '!' });
+                //Сохраняем в реестор время и комментарий из temp[1]
+                Time.SetValue(current_date.ToString(), time_day + "!" + temp[1]);
+            }
+            
         }
         private void ShowTime()//-- Время заносится в секундах а мы выводим в часах минутах секундах
         {
@@ -153,73 +162,45 @@ namespace Timer
 
             Label1.Text = ha + ":" + Format(ma) + ":" + Format(sa);
             label6.Text = Format(hd) + ":" + Format(md) + ":" + Format(sd);
-            notifyIcon2.Text = Format(hd) + ":" + Format(md) + ":" + Format(sd);
+            notifyIcon2.Text = label6.Text;
         }
-        private string Format(int t) //Форматируем день что бы имел формат 00:00:00
+        public static string Format(int t) //Форматируем день что бы имел формат 00:00:00
         {
             return (t < 10 ? "0" + t.ToString() : t.ToString());
         }
-        private void Timer4_Tick(object sender, EventArgs e)//В промежуток времени сохраняем время в localstor
-        {
-            text = time_day + "!" + textBox1.Text;
-            Time.SetValue(current_date.ToShortDateString(), text);
-            Time.SetValue("time_all", time_all);
-            
-            StatDays();
-        }
+        
         private void StatDays()//Проходимся по всем дням и выводим их в список дней
         {
-            listBox1.Items.Clear();
             
+            
+            Grid.Rows.Clear();
             foreach (string valueName in Time.GetValueNames())
             {
                 //Все дни кроме ключа time_all
                 if (valueName != "time_all")
                 {
-                    if (valueName != "text") 
-                    {
-                    
-                    Parsing_Key(Time.GetValue(valueName).ToString());
-                    int timelist = Convert.ToInt32(time_day);
+                    string[] tmp = Time.GetValue(valueName).ToString().Split(new char[] { '!' });
 
-                    int td = timelist;
+                    int td = Convert.ToInt32(tmp[0]);
                     int hd = td / 3600;
                     int t2d = td - hd * 3600;
                     int md = t2d / 60;
                     int sd = t2d - md * 60;
 
-                    listBox1.Items.Add(valueName + " - " + Format(hd) + ":" + Format(md) + ":" + Format(sd));
-                    }
-                    
-                    
+                    Grid.Rows.Add(valueName, Format(hd) + ":" + Format(md) + ":" + Format(sd), tmp[1]);
                 }
             }
         }
-        private void Parsing_Key(string text) 
+        private void Grid_DoubleClick(object sender, EventArgs e)
         {
-            //StringSplitOptions.RemoveEmptyEntries
-            //Time.GetValue("time_all").ToString()
-            textBox1.Text = "";
-            string[] words = text.Split(new char[] { '!' });
-            for (int i = 0; i < words.Length; i++) 
+            frmDay.Text = Grid.CurrentRow.Cells[0].Value.ToString();
+            frmDay.timeDay.Text = Grid.CurrentRow.Cells[1].Value.ToString();
+            frmDay.textDay.Text = Grid.CurrentRow.Cells[2].Value.ToString();
+            frmDay.ShowDialog();
+            if (frmDay.DialogResult == DialogResult.OK)
             {
-                if (i == 0)
-                {
-                    time_day = Convert.ToInt32(words[i]);
-                }
-                else
-                {  
-                    textBox1.Text += (words[i] + "\n");
-                }
-                    
+                StatDays();
             }
-                
-            
-            
         }
-        private void domainUpDown1_SelectedItemChanged(object sender, EventArgs e)
-        {
-
-        } //--
     }
 }
