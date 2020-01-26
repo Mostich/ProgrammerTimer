@@ -171,8 +171,8 @@ namespace Timer
         
         private void StatDays()//Проходимся по всем дням и выводим их в список дней
         {
-            
-            
+
+            int i = 0;
             Grid.Rows.Clear();
             foreach (string valueName in Time.GetValueNames())
             {
@@ -188,8 +188,31 @@ namespace Timer
                     int sd = t2d - md * 60;
 
                     Grid.Rows.Add(valueName, Format(hd) + ":" + Format(md) + ":" + Format(sd), tmp[1]);
+                    ColorRows(hd, md, sd, i);
+                    i++;
                 }
             }
+        }
+        private void ColorRows(int hd, int md, int sd, int i) 
+        {
+            
+            DataGridViewCellStyle rowColor = new DataGridViewCellStyle();
+            rowColor.BackColor = Color.Red;
+            if (md < 1)
+            {
+                Grid.Rows[i].Cells[0].Style.BackColor = System.Drawing.Color.Red;
+                Grid.Rows[i].Cells[1].Style.BackColor = System.Drawing.Color.Red;
+            }
+            else if (md > 10 || hd < 1)
+            {
+                Grid.Rows[i].Cells[0].Style.BackColor = System.Drawing.Color.Orange;
+                Grid.Rows[i].Cells[1].Style.BackColor = System.Drawing.Color.Orange;
+            }
+            else
+            {
+                Grid.Rows[i].Cells[0].Style.BackColor = System.Drawing.Color.Green;
+                Grid.Rows[i].Cells[1].Style.BackColor = System.Drawing.Color.Green;
+            } 
         }
         private void Grid_DoubleClick(object sender, EventArgs e)
         {
